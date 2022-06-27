@@ -109,12 +109,20 @@ class blackjack{
         $this->deck->shuffle();
     }
 ```
-4. [ ] In the [constructor](https://www.php.net/manual/en/language.oop5.decon.php) of the `Player` class;
+4. [x] In the [constructor](https://www.php.net/manual/en/language.oop5.decon.php) of the `Player` class;
     - -[x] Make it expect the `Deck` object as a parameter.
-    - -[ ] Pass this `Deck` from the `Blackjack` constructor.
+    - -[x] Pass this `Deck` from the `Blackjack` constructor.
     - -[x] Now draw 2 cards for the player. You have to use an existing method for this from the Deck class.
-5. [ ] Go back to the `Player` class and add the following logic in your empty methods:
-    - -[ ] `getScore` loops over all the cards and return the total value of that player.
+```php
+       public function __construct(object $deck){
+        $this->magic = 21; //class constant to avoid magical number
+        $this->cards = $deck->drawCard();
+        $this->cards = $deck->drawCard();
+    }
+```
+
+5. [x] Go back to the `Player` class and add the following logic in your empty methods:
+    - [x] `getScore` loops over all the cards and return the total value of that player.
     - [x] `hasLost` will return the bool of the lost property.
     - [x] `hit` should add a card to the player. If this brings him above 21, set `lost` property to `true`. To count his score use the method `getScore` you wrote earlier. This method should expect the `$deck` variable as an argument from outside, to draw the card.
         - -[x] (optional) For bonus points make the number 21 a class constant: this is a [magical value](https://stackoverflow.com/questions/47882/what-is-a-magic-number-and-why-is-it-bad) we want to avoid.
@@ -125,6 +133,32 @@ class blackjack{
     - -[x] `surrender` should make you surrender the game. (Dealer wins.)
       This sets the property `lost` in the `player` instance to true.
     - -[x] `stand` does not have a method in the player class but will instead call hit on the `dealer` instance. (you have to do nothing here)
+```php
+    public function getScore():int{
+        $score = 0;
+        foreach ($this->cards as/*$key=>*/ $value){ //not sure if $key=> is required so commented it out until later
+            $score+=$value->getValue();
+        }
+        return $score;
+    }
+
+    public function hit($deck):void{
+        $this->cards = $deck->drawCard();
+        if ($this->getScore()>$this->magic){
+            $this->surrender();
+        }
+    }
+
+    public function surrender():void{
+        $this->lost=true;
+    }
+
+
+    public function hasLost(): bool
+    {
+        return $this->lost;
+    }
+```    
 
 #### Creating the index.php  file
 1. [ ] Create an index.php file with the following code:

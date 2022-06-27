@@ -12,30 +12,34 @@ class player
     private bool $lost;
     private int $magic;
 
-    public function __construct(array $deck){
-        $this->magic = 21;
-        (new blackjack)->getDeck();
-        $this->getCards();
+    public function __construct(object $deck){
+        $this->magic = 21; //class constant to avoid magical number
+        $this->cards = $deck->drawCard();
+        $this->cards = $deck->drawCard();
     }
 
-    public function getScore(){
-
+    public function getScore():int{
+        $score = 0;
+        foreach ($this->cards as/*$key=>*/ $value){ //not sure if $key=> is required so commented it out until later
+            $score+=$value->getValue();
+        }
+        return $score;
     }
 
-    public function hit($deck){
-        $this->drawCard();
-        $this->getScore();
+    public function hit($deck):void{
+        $this->cards = $deck->drawCard();
         if ($this->getScore()>$this->magic){
-            $this->lost=true;
+            $this->surrender();
         }
     }
 
-    public function surrender(){
+    public function surrender():void{
         $this->lost=true;
     }
 
 
-    public function hasLost(){
+    public function hasLost(): bool
+    {
         return $this->lost;
     }
 
