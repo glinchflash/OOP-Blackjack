@@ -13,6 +13,7 @@ Try to make a blackjack game using OOP. Below we have the blackjack rules.
 - We are not playing with blackjack rules on the first turn (having 21 on first turn) - we leave this up to you as a nice to have.
 
 #### Flow
+How does the game flow goes!
 - A new deck is shuffled
 - Player and dealer get 2 random cards
 - Dealer shows first card he drew to player
@@ -161,36 +162,73 @@ class blackjack{
 ```    
 
 #### Creating the index.php  file
-1. [ ] Create an index.php file with the following code:
-    - -[ ] Require all the files with the classes you already created. Ideally you want a seperate file for each class.
-    - -[ ] Start the PHP session
-    - -[ ] If the session does not have a `Blackjack` variable yet:
-        - -[ ] Create a new `Blackjack` object.
-        - -[ ] Put the `Blackjack` object in the session
-1. [ ] Use buttons or links to send to the `index.php` page what the player's action is. (i.e. hit/stand/surrender)
+1. [x] Create an index.php file with the following code:
+    - -[x] Require all the files with the classes you already created. Ideally you want a seperate file for each class.
+    - -[x] Start the PHP session
+    - -[x] If the session does not have a `Blackjack` variable yet:
+        - -[x] Create a new `Blackjack` object.
+        - -[x] Put the `Blackjack` object in the session
+    - [x] Use buttons or links to send to the `index.php` page what the player's action is. (i.e. hit/stand/surrender)
 
-
+  ```php
+//requirements
+  require 'code/blackjack.php';
+require 'code/player.php';
+require 'code/Deck.php';
+require 'code/Suit.php';
+require 'code/Card.php';
+------------------------------------------------------------------------------------------------------------------------
+//start session to keep game state
+if (!isset($_SESSION)){
+    session_start();
+}
+------------------------------------------------------------------------------------------------------------------------
+//store blackjack object in session
+if (empty($_SESSION['blackjack'])){
+    $blackjack = new blackjack();
+    $_SESSION['blackjack']= $blackjack;
+} else $blackjack=$_SESSION['blackjack'];
+```
 
 #### The dealer
 So far we are assuming the player and dealer play with the same rules, hence they share a class. There is of course an important difference: the dealer does keep playing with the function `hit` until he has at least 15.
 
-1. [ ] To change this behavior, we have are going [extend](https://www.php.net/manual/en/language.oop5.inheritance.php) the `player` class and extend it to a newly created `dealer` class.
+1. [x] To change this behavior, we have are going [extend](https://www.php.net/manual/en/language.oop5.inheritance.php) the `player` class and extend it to a newly created `dealer` class.
 
-1. [ ] Change the `Blackjack` class to create a new `dealer` object instead of a `player` object for the property of the dealer.
+1. [x] Change the `Blackjack` class to create a new `dealer` object instead of a `player` object for the property of the dealer.
 
-1. [ ] Now create a `hit` function that keeps drawing cards until the dealer has at least 15 points. The tricky part is that we also need the `lost` check we already had in the `hit` function of the player. We could just copy the code but duplicated code is never the solution, instead you can use the following code to call the old `hit` function:
+1. [x] Now create a `hit` function that keeps drawing cards until the dealer has at least 15 points. The tricky part is that we also need the `lost` check we already had in the `hit` function of the player. We could just copy the code but duplicated code is never the solution, instead you can use the following code to call the old `hit` function:
 
 ```parent::hit();```
 
+```php
+//creating class dealer that extends on player class
+class dealer extends player{
+
+    private int $magicDealer; //avoiding magical value
+    function __construct(object $deck)
+    {
+        parent::__construct($deck);
+        $this->magicDealer = 15; //default value, which can be changed if needed
+    }
+
+    function hit($deck): void
+    {
+        parent::hit($deck);
+        if (parent::getScore()<$this->magicDealer){
+            $this->hit($deck);
+        }
+    }}
+```
 #### Final push 
 All classes are ready, now you just need to write some minimal glue in the `index.php`. The final result should be the following:
 
-1. [ ]  When you the **hit** button call `hit` on player, then check the lost status of the player.
+1. [ ]  When you click the **hit** button call `hit` on player, then check the lost status of the player.
    You will need to pass a `Deck` variable to this function, you can use the `Blackjack::getDeck()` method for this.
-2. [ ] When you the **stand** button call `hit` on dealer, then check the lost status of the dealer. If he is not lost, compare scores to set the winner (If equal the dealer wins).
-3. [ ] **Surrender**: the dealer auto wins.
+2. [x] When you click the **stand** button call `hit` on dealer, then check the lost status of the dealer. If he is not lost, compare scores to set the winner (If equal the dealer wins).
+3. [x] **Surrender**: the dealer auto wins.
 4. [ ] Always display on the page the scores of both players. If you have a winner, display it.
-5. [ ] End of the game: destroy the current `blackjack` variable so the game restarts.
+5. [x] End of the game: destroy the current `blackjack` variable so the game restarts.
 ---
 
 # Nice to have Progress

@@ -7,7 +7,7 @@ class Deck
     private const KNIGHT_CARD = 12;//In italian & spanish decks there is a knight card, but we don't need it
 
     /** @var Card[]  */
-    private $cards = [];
+    private array $cards = [];
 
     public function __construct() {
         $suits = [

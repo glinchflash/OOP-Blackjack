@@ -1,10 +1,6 @@
 <?php
 declare(strict_types=1);
 
-require 'code/player.php';
-require 'code/Deck.php';
-require 'code/Card.php';
-require 'code/Suit.php';
 class blackjack{
 
     private object $player;
@@ -16,20 +12,20 @@ class blackjack{
         $this->deck = new Deck();
         $this->deck->shuffle();
         $this->player = new player($this->deck);
-        $this->dealer = new player($this->deck);
+        $this->dealer = new dealer($this->deck);
     }
 
 
-    public function getPlayer(){
+    public function getPlayer():object{
        return $this->player;
 
     }
 
-    public function getDealer(){
+    public function getDealer():object{
         return $this->dealer;
     }
 
-    public function getDeck(){
+    public function getDeck():object{
         return $this->deck;
 
     }
