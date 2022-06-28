@@ -223,7 +223,7 @@ class dealer extends player{
 #### Final push 
 All classes are ready, now you just need to write some minimal glue in the `index.php`. The final result should be the following:
 
-1. [ ]  When you click the **hit** button call `hit` on player, then check the lost status of the player.
+1. [x]  When you click the **hit** button call `hit` on player, then check the lost status of the player.
    You will need to pass a `Deck` variable to this function, you can use the `Blackjack::getDeck()` method for this.
 2. [x] When you click the **stand** button call `hit` on dealer, then check the lost status of the dealer. If he is not lost, compare scores to set the winner (If equal the dealer wins).
 3. [x] **Surrender**: the dealer auto wins.
