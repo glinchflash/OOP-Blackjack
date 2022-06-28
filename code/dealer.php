@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 class dealer extends player{
 
-    private int $magicDealer;
+    private const magicDealer = 15;
     function __construct(object $deck)
     {
         parent::__construct($deck);
@@ -12,11 +12,10 @@ class dealer extends player{
 
     public function hit($deck): void
     {
-
         do{
             parent::hit($deck);
         }while
-        (parent::getScore()<=$this->magicDealer);
+        ($this->getScore()<=self::magicDealer);
 
     }
 }

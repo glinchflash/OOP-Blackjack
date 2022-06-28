@@ -6,7 +6,7 @@ class blackjack{
     private object $player;
     private object $dealer;
     private object $deck;
-
+    private bool $gameOver = false;
 
     public function __construct(){
         $this->deck = new Deck();
@@ -30,5 +30,11 @@ class blackjack{
 
     }
 
+    public function getGameOver():bool{
+        return $this->gameOver;
+    }
 
+    public function setGameOver($gameOver):void{
+        $this->gameOver = $gameOver;
+    }
 }

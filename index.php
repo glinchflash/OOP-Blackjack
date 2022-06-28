@@ -13,46 +13,43 @@ require 'code/dealer.php';
 if (!isset($_SESSION)){
     session_start();
 }
+//session_start();
 
-if (empty($_SESSION['blackjack'])){
+
+//if Session is empty, store new one else reload the original one
+if (!isset($_SESSION['blackjack'])){
+    $blackjack = new blackjack();
+    $_SESSION['blackjack']= $blackjack;
+}else if (isset($_SESSION["blackjack"])) {
+    $blackjack = $_SESSION['blackjack'];
+}
+
+//functionality of buttons
+
+//on hit check if player didn't lose already, if not draw a card from currently used deck -> check player to see if he has "lost"
+if (isset($_POST['hit'])){
+    if ($blackjack->getGameOver()===false) {
+        if ($blackjack->getPlayer()->hasLost() === false) {
+            $blackjack->getPlayer()->hit($blackjack->getDeck());
+        } else echo "You already lost!";
+    }else echo "You passed your turn to the dealer!";
+}
+
+//surrender -> to let the player give up
+if (isset($_POST['surrender'])){
+    $blackjack->getPlayer()->surrender();
+    unset($_SESSION['blackjack']);
     $blackjack = new blackjack();
     $_SESSION['blackjack']= $blackjack;
 }
 
-//functionality of buttons
-if (isset($_POST['hit'])){
-    if($_SESSION['blackjack']->getPlayer()->hasLost() === false){
-        $_SESSION['blackjack']->getPlayer()->hit($_SESSION['blackjack']->getDeck());
-    }else echo "You already lost!";
-    checkPlayer();
+//to pass turn to dealer and check if he isn't busted
+if (isset($_POST['stand'])) {
+    if ($blackjack->getDealer()->hasLost() === false) {
+    $blackjack->getDealer()->hit($blackjack->getDeck());
+    $blackjack->setGameOver(true);
+}else echo "Dealer has busted";
 }
-
-if (isset($_POST['surrender'])){
-    $this->surrender();
-}
-
-if (isset($_POST['stand'])){
-    $_SESSION['blackjack']->getDealer()->hit();
-    checkDealer();
-}
-
-
-function checkPlayer():void{
-
-    if($_SESSION['blackjack']->getPlayer()->hasLost() === true){
-        echo "Dealer won!";
-    }
-}
-
-
-
-function checkDealer():void{
-
-    if($_SESSION['blackjack']->getDealer()->hasLost() === true){
-        echo "You won!";
-    }
-}
-
 
 
 ?>
@@ -71,26 +68,26 @@ function checkDealer():void{
     <div class="row align-items-center">
         <div class="col-6 text-left">Player
             <div class="row">
-                <?php foreach($_SESSION['blackjack']->getPlayer()->getCards() AS $card):?>
+                <?php foreach($blackjack->getPlayer()->getCards() AS $card):?>
                     <div style="text-align:center; font-size:100px;" class="row card col-lg-3">
                         <?= $card->getUnicodeCharacter(true);?>
                     </div>
                 <?php endforeach;?>
             </div>
             <?php
-            echo "Player score: ". $_SESSION['blackjack']->getPlayer()->getScore();
+            echo "Player score: ". $blackjack->getPlayer()->getScore();
             ?>
         </div>
         <div class="col-6 text-left">Dealer
             <div class="row">
-                <?php foreach($_SESSION['blackjack']->getDealer()->getCards() AS $card):?>
+                <?php foreach($blackjack->getDealer()->getCards() AS $card):?>
                     <div style="text-align:center; font-size:100px;" class="row card col-lg-3">
                         <?= $card->getUnicodeCharacter(true);?>
                     </div>
                 <?php endforeach;?>
             </div>
             <?php
-            echo "Dealer score: ". $_SESSION['blackjack']->getDealer()->getScore();
+            echo "Dealer score: ". $blackjack->getDealer()->getScore();
             ?>
         </div>
     </div>
@@ -106,6 +103,3 @@ function checkDealer():void{
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>
-<?php
-unset($_SESSION['blackjack']);
-?>
