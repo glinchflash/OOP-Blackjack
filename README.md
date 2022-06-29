@@ -238,3 +238,10 @@ All classes are ready, now you just need to write some minimal glue in the `inde
     - -[ ] If the player wins the bet he gains double the amount of chips.
 - [x] Implement the blackjack first turn rule: if the player draws 21 the first turn: he directly wins. If the dealer draws 21 the first turn, he wins. If both draw it, it is a tie.
     - -[ ] When you implement both nice to have features, a blackjack means an auto win of 10 chips, a blackjack of the dealer a loss of 5 chips for the player.
+
+## What did I learn?
+1. what the `$this` means and does
+2. better understanding of functions and their parameters
+3. using getters and setters more effective 
+4. splitting up into multiple files for each "part"
+---
