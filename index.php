@@ -82,17 +82,18 @@ if (isset($_POST['surrender'])) {
 
 //to pass turn to dealer and check if he isn't busted
 if (isset($_POST['stand'])) {
-    $blackjack->setTurn(true);
-    if ($blackjack->getPlayer()->getScore() === $blackjack->getDealer()->getScore() || $blackjack->getDealer()->getScore() > $blackjack->getPlayer()->getScore()) {
-        $blackjack->getPlayer()->surrender();
+    if ($blackjack->getGameOver() === false) {
+        $blackjack->setTurn(true);
+        if ($blackjack->getPlayer()->getScore() === $blackjack->getDealer()->getScore() || $blackjack->getDealer()->getScore() > $blackjack->getPlayer()->getScore()) {
+            $blackjack->getPlayer()->surrender();
 
-    } else if ($blackjack->getDealer()->hasLost() === false) {
-        $blackjack->getDealer()->hit($blackjack->getDeck());
-        $blackjack->setGameOver(true);
+        } else if ($blackjack->getDealer()->hasLost() === false) {
+            $blackjack->getDealer()->hit($blackjack->getDeck());
+            $blackjack->setGameOver(true);
+        }
+        $blackjack->gameLogic();
     }
-    $blackjack->gameLogic();
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -127,9 +128,7 @@ if (isset($_POST['stand'])) {
                 <?php if(!isset($_POST['stand'])&& !$blackjack->getPlayer()->hasLost()):?>
                     <div style="text-align:center; font-size:100px; color: blue;" class="card col-lg-3">
                         <?= $blackjack->getDealer()->getCards()[0]->getUnicodeCharacter(true);?>
-
                     </div>
-
                 <?php elseif (isset($_POST['stand']) ||
                     $blackjack->getPlayer()->getscore()=== $blackjack->getPlayer()->getMagic() ||
                     $blackjack->getDealer()->getScore()=== $blackjack->getPlayer()->getMagic()||
