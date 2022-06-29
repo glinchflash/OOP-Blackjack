@@ -227,7 +227,7 @@ All classes are ready, now you just need to write some minimal glue in the `inde
    You will need to pass a `Deck` variable to this function, you can use the `Blackjack::getDeck()` method for this.
 2. [x] When you click the **stand** button call `hit` on dealer, then check the lost status of the dealer. If he is not lost, compare scores to set the winner (If equal the dealer wins).
 3. [x] **Surrender**: the dealer auto wins.
-4. [ ] Always display on the page the scores of both players. If you have a winner, display it.
+4. [x] Always display on the page the scores of both players. If you have a winner, display it.
 5. [x] End of the game: destroy the current `blackjack` variable so the game restarts.
 ---
 
@@ -236,5 +236,5 @@ All classes are ready, now you just need to write some minimal glue in the `inde
     - -[ ] Every new player (new session) starts with 100 chips
     - -[ ] After the player gets his 2 first cards every round ask how much he wants to bet. He needs to bet at least 5 chips.
     - -[ ] If the player wins the bet he gains double the amount of chips.
-- [ ] Implement the blackjack first turn rule: if the player draws 21 the first turn: he directly wins. If the dealer draws 21 the first turn, he wins. If both draw it, it is a tie.
+- [x] Implement the blackjack first turn rule: if the player draws 21 the first turn: he directly wins. If the dealer draws 21 the first turn, he wins. If both draw it, it is a tie.
     - -[ ] When you implement both nice to have features, a blackjack means an auto win of 10 chips, a blackjack of the dealer a loss of 5 chips for the player.

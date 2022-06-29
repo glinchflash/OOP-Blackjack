@@ -8,6 +8,7 @@ class player
     private bool $lost;
     private const magic = 21;//class constant to avoid magical value
 
+
     public function __construct(object $deck){
         $this->lost = false;
         array_push($this->cards, $deck->drawCard(), $deck->drawCard()); //push 2 cards into hand of player (cards = hand, drawcard = card from deck)
@@ -43,6 +44,11 @@ class player
     {
         return $this->cards;
     }
+
+    public function getMagic():int{
+        return self::magic;
+    }
+
 }
 
 

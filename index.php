@@ -13,7 +13,6 @@ require 'code/dealer.php';
 if (!isset($_SESSION)) {
     session_start();
 }
-//session_start();
 
 
 //if Session is empty, store new one else reload the original one
@@ -24,28 +23,51 @@ if (!isset($_SESSION['blackjack']) || isset($_POST['playAgain'])) {
     $blackjack = $_SESSION['blackjack'];
 }
 
+if (!isset($_POST['hit']) && !isset($_POST['stand']) && !isset($_POST['surrender'])) {
+    if ($blackjack->getPlayer()->getScore() === $blackjack->getPlayer()->getMagic()) {
+        echo '<div class="alert alert-success text-center" role="alert">';
+        echo 'You won by Blackjack!';
+        echo '</div>';
+        $blackjack->setGameOver(true);
+
+    } else if ($blackjack->getDealer()->getScore() === $blackjack->getDealer()->getMagic()) {
+        echo '<div class="alert alert-danger text-center" role="alert">';
+        echo 'Dealer won by Blackjack!';
+        echo '</div>';
+        $blackjack->setGameOver(true);
+    }else if (($blackjack->getDealer()->getScore() && $blackjack->getPlayer()->getScore())=== $blackjack->getPlayer()->getMagic()){
+        echo '<div class="alert alert-warning text-center" role="alert">';
+        echo 'It is a tie, Both you and the dealer have blackjack!';
+        echo '</div>';
+        $blackjack->setGameOver(true);
+    }
+}
 //functionality of buttons
 
 //on hit check if player didn't lose already, if not draw a card from currently used deck -> check player to see if he has "lost"
 if (isset($_POST['hit'])) {
-        if ($blackjack->getGameOver() === false) {
-            if ($blackjack->getPlayer()->hasLost() === false) {
-                $blackjack->getPlayer()->hit($blackjack->getDeck());
-            } else {
-                echo '<div class="alert alert-danger text-center" role="alert">';
-                echo "You already lost!";
-                echo '</div>';
-            }
+    if ($blackjack->getGameOver() === false) {
+        if ($blackjack->getPlayer()->hasLost() === false) {
+            $blackjack->getPlayer()->hit($blackjack->getDeck());
         } else {
-            echo '<div class="alert alert-warning text-center" role="alert">';
-            echo "You passed your turn to the dealer!";
-            echo '</div>';
-        }
-        if ($blackjack->getPlayer()->hasLost()===true){
             echo '<div class="alert alert-danger text-center" role="alert">';
-            echo "Busted, You lose!";
+            echo "You already lost!";
             echo '</div>';
+            $blackjack->setGameOver(true);
         }
+    } else {
+        echo '<div class="alert alert-warning text-center" role="alert">';
+        echo "You passed your turn to the dealer!";
+        echo '</div>';
+        $blackjack->setGameOver(true);
+    }
+    if ($blackjack->getPlayer()->hasLost() === true) {
+        echo '<div class="alert alert-danger text-center" role="alert">';
+        echo "Busted, You lose!";
+        echo '</div>';
+        $blackjack->setTurn(true);
+        $blackjack->setGameOver(true);
+    }
 }
 
 //surrender -> to let the player give up
@@ -54,26 +76,21 @@ if (isset($_POST['surrender'])) {
     echo '<div class="alert alert-danger text-center" role="alert">';
     echo "You surrender, Dealer has won by forfeit of Player";
     echo '</div>';
+    $blackjack->setTurn(true);
+    $blackjack->setGameOver(true);
 }
 
 //to pass turn to dealer and check if he isn't busted
 if (isset($_POST['stand'])) {
-    if ($blackjack->getDealer()->hasLost() === false) {
-        if ($blackjack->getDealer()->getScore() < $blackjack->getPlayer()->getScore()){
-            $blackjack->getDealer()->hit($blackjack->getDeck());
-            $blackjack->setGameOver(true);
-        }else {
-            $blackjack->getPlayer()->surrender();
-            echo '<div class="alert alert-danger text-center" role="alert">';
-            echo 'Dealer Won!';
-            echo '</div>';
-        }
+    $blackjack->setTurn(true);
+    if ($blackjack->getPlayer()->getScore() === $blackjack->getDealer()->getScore() || $blackjack->getDealer()->getScore() > $blackjack->getPlayer()->getScore()) {
+        $blackjack->getPlayer()->surrender();
+
+    } else if ($blackjack->getDealer()->hasLost() === false) {
+        $blackjack->getDealer()->hit($blackjack->getDeck());
+        $blackjack->setGameOver(true);
     }
-    if ($blackjack->getDealer()->hasLost()===true){
-        echo '<div class="alert alert-success text-center" role="alert">';
-        echo 'Dealer busted, You won!';
-        echo '</div>';
-    }
+    $blackjack->gameLogic();
 }
 
 
@@ -107,15 +124,36 @@ if (isset($_POST['stand'])) {
         </div>
         <div class="col-6 text-left">Dealer
             <div class="row">
-                <?php foreach ($blackjack->getDealer()->getCards() as $card): ?>
-                    <div style="text-align:center; font-size:100px;" class="row card col-lg-3">
-                        <?= $card->getUnicodeCharacter(true); ?>
+                <?php if(!isset($_POST['stand'])&& !$blackjack->getPlayer()->hasLost()):?>
+                    <div style="text-align:center; font-size:100px; color: blue;" class="card col-lg-3">
+                        <?= $blackjack->getDealer()->getCards()[0]->getUnicodeCharacter(true);?>
+
                     </div>
-                <?php endforeach; ?>
+
+                <?php elseif (isset($_POST['stand']) ||
+                    $blackjack->getPlayer()->getscore()=== $blackjack->getPlayer()->getMagic() ||
+                    $blackjack->getDealer()->getScore()=== $blackjack->getPlayer()->getMagic()||
+                    $blackjack->getPlayer()->hasLost()):?>
+
+                    <?php foreach ($blackjack->getDealer()->getCards() AS $card):?>
+                        <div style="text-align:center; font-size:100px" class="card col-lg-3">
+                            <?= $card->getUnicodeCharacter(true); ?>
+                        </div>
+                    <?php endforeach;?>
+                <?php endif;?>
             </div>
+
             <?php
-            echo "Dealer score: " . $blackjack->getDealer()->getScore();
-            ?>
+            if ($blackjack->getTurn()===false) {
+                echo "Dealer score: " . $blackjack->getDealer()->getCards()[0]->getValue();
+            }else {
+                echo "Dealer score: " . $blackjack->getDealer()->getScore();
+            }
+            if(($blackjack->getPlayer()->getscore() && $blackjack->getDealer()->getScore())=== $blackjack->getPlayer()->getMagic()){
+                echo "Dealer score: " . $blackjack->getDealer()->getScore();
+            }
+           ?>
+
         </div>
     </div>
     <div class="row align-items-center">
@@ -125,7 +163,7 @@ if (isset($_POST['stand'])) {
                 <button type="submit" name="stand" class="btn btn-lg btn-warning">Stand</button>
                 <button type="submit" name="surrender" class="btn btn-lg btn-danger">Surrender</button>
                 <?php
-                if (isset($_POST['surrender'])||$blackjack->getPlayer()->hasLost()===true||$blackjack->getDealer()->hasLost()===true) {
+                if ($blackjack->getGameOver() === true) {
                     echo '<button type="submit" name="playAgain" class="btn btn-lg btn-warning">Play again!</button>';
                 }
                 ?>

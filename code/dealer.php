@@ -15,7 +15,8 @@ class dealer extends player{
         do{
             parent::hit($deck);
         }while
-        ($this->getScore()<=self::magicDealer);
+        ($this->getScore()<self::magicDealer);
 
     }
+
 }
